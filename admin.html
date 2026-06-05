@@ -3,105 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Superadmin Voting Terminal</title>
+    <title>P-VALUE Club - Superadmin Ledger Engine</title>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; padding: 30px; }
-        .admin-box { max-width: 900px; margin: 0 auto; }
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
-        button { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; }
-        button:hover { background: #0ea5e9; }
-        .results-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-        .tally-card { background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; }
-        h3 { color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid #475569; padding-bottom: 5px; }
-        .tally-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #334155; }
-        .count-badge { background: #38bdf8; color: #0f172a; padding: 2px 10px; border-radius: 12px; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #334155; }
-        th { background: #1e293b; color: #94a3b8; }
+        :root {
+            --bg-primary: #0b0f0d;
+            --bg-secondary: #131916;
+            --accent: #52796f;
+            --text-main: #f0f3f1;
+            --text-muted: #cad2c5;
+            --border-color: #222e28;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-primary); color: var(--text-main); padding: 30px; }
+        .admin-box { max-width: 1200px; margin: 0 auto; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; }
+        h2 { font-weight: 700; letter-spacing: -0.02em; }
+        .club-name { color: #ffffff; border-bottom: 2px solid var(--accent); }
+        button { background: var(--accent); color: #ffffff; border: 1px solid rgba(255,255,255,0.1); padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.025em; }
+        button:hover { background: #354f52; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .tally-card { background: var(--bg-secondary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
+        h3 { color: #ffffff; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em; }
+        .tally-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.9rem; }
+        .count-badge { background: rgba(82, 121, 111, 0.2); color: var(--text-muted); padding: 2px 10px; border-radius: 4px; font-weight: bold; border: 1px solid var(--border-color); }
+        .ledger-title { font-size: 1.2rem; margin-bottom: 15px; font-weight: 700; text-transform: uppercase; }
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        th { background: #070a08; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; }
     </style>
 </head>
 <body>
 
     <div class="admin-box">
         <div class="header-row">
-            <h2>Superadmin Tally & Verification Command Control</h2>
-            <button onclick="fetchDatabaseData()">Refresh Live Audit Logs</button>
+            <h2><span class="club-name">P-VALUE Club</span> Control Ledger</h2>
+            <button onclick="fetchDatabaseData()">Refresh Tally Aggregation</button>
         </div>
 
-        <!-- Real Tally Tables -->
-        <div class="results-container">
-            <div class="tally-card">
-                <h3>President Tally Results</h3>
-                <div id="presidentTally">Click refresh to load...</div>
-            </div>
-            
-            <div class="tally-card">
-                <h3>Representative Tally Results</h3>
-                <div id="repTally">Click refresh to load...</div>
-            </div>
+        <!-- Dynamic Summary Card Matrix -->
+        <div id="dynamicDashboard" class="grid-container">
+            <!-- Programmatically initialized metrics print here -->
         </div>
 
-        <h3>Raw Audit Ledger Logs</h3>
-        <table id="auditTable">
-            <thead>
-                <tr>
-                    <th>LRN</th>
-                    <th>Last Name</th>
-                    <th>Track</th>
-                    <th>Section</th>
-                    <th>President Vote</th>
-                    <th>Representative Vote</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="6" style="text-align:center; color:#94a3b8;">No records loaded. Click Refresh above.</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="ledger-title">Raw Cryptographic Vote Verification Ledger</div>
+        <div class="table-responsive">
+            <table id="auditTable">
+                <thead>
+                    <tr>
+                        <th>LRN</th>
+                        <th>Last Name</th>
+                        <th>Track</th>
+                        <th>Section</th>
+                        <th>Pres</th>
+                        <th>VP Ext</th>
+                        <th>VP Int</th>
+                        <th>Sec</th>
+                        <th>Treas</th>
+                        <th>Aud</th>
+                        <th>PIO</th>
+                        <th>PO</th>
+                        <th>Layout 1</th>
+                        <th>Layout 2</th>
+                        <th>Layout 3</th>
+                        <th>Layout 4</th>
+                        <th>Mod 1</th>
+                        <th>Mod 2</th>
+                        <th>Representative Position Choice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="19" style="text-align:center; color: var(--text-muted); padding: 30px;">Initialize the network query fetch loop to display metrics.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxC5UUirKQ23Nh4N3daTklJKuJxOZa3CkWMV97BT792_zJk8Let4-s4JGNzAAadjhG3/exec";
 
+        const postKeys = [
+            "president", "vicePresidentExt", "vicePresidentInt", "secretary", 
+            "treasurer", "auditor", "pio", "po", "layout1", "layout2", 
+            "layout3", "layout4", "mod1", "mod2", "representative"
+        ];
+
         function fetchDatabaseData() {
+            const btn = document.querySelector('button');
+            btn.disabled = true;
+            btn.innerText = "Aggregating Ledger Rows...";
+
             fetch(SCRIPT_URL)
             .then(res => res.json())
             .then(data => {
-                processTally(data);
+                generateCalculations(data);
                 renderAuditTable(data);
             })
-            .catch(err => alert("Error pulling down data ledger: " + err));
+            .catch(err => alert("Data core collection error: " + err))
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerText = "Refresh Tally Aggregation";
+            });
         }
 
-        function processTally(data) {
-            let presCounts = {};
-            let repCounts = {};
+        function generateCalculations(data) {
+            const dash = document.getElementById('dynamicDashboard');
+            dash.innerHTML = '';
+            
+            postKeys.forEach(key => {
+                let counts = {};
+                data.forEach(row => {
+                    if (row[key]) {
+                        counts[row[key]] = (counts[row[key]] || 0) + 1;
+                    }
+                });
 
-            data.forEach(item => {
-                // Tally Presidents
-                if(item.president) {
-                    presCounts[item.president] = (presCounts[item.president] || 0) + 1;
+                let card = document.createElement('div');
+                card.className = 'tally-card';
+                
+                let titleText = key.replace(/([A-Z])/g, ' $1');
+                card.innerHTML = `<h3>${titleText}</h3>`;
+                
+                for(let candidate in counts) {
+                    card.innerHTML += `<div class="tally-item"><span>${candidate}</span><span class="count-badge">${counts[candidate]}</span></div>`;
                 }
-                // Tally Representatives
-                if(item.representative) {
-                    repCounts[item.representative] = (repCounts[item.representative] || 0) + 1;
-                }
+                if(Object.keys(counts).length === 0) card.innerHTML += `<div class="tally-item" style="color:var(--text-muted)">No votes cast.</div>`;
+                dash.appendChild(card);
             });
-
-            // Render President Box UI
-            const presBox = document.getElementById('presidentTally');
-            presBox.innerHTML = '';
-            for (let k in presCounts) {
-                presBox.innerHTML += `<div class="tally-item"><span>${k}</span><span class="count-badge">${presCounts[k]}</span></div>`;
-            }
-
-            // Render Rep Box UI
-            const repBox = document.getElementById('repTally');
-            repBox.innerHTML = '';
-            for (let k in repCounts) {
-                repBox.innerHTML += `<div class="tally-item"><span>${k}</span><span class="count-badge">${repCounts[k]}</span></div>`;
-            }
         }
 
         function renderAuditTable(data) {
@@ -109,18 +138,31 @@
             tbody.innerHTML = '';
             
             if(data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No entries found in ledger.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="19" style="text-align:center;">No records registered.</td></tr>';
                 return;
             }
 
             data.forEach(item => {
                 let row = `<tr>
-                    <td>${item.lrn}</td>
-                    <td>${item.lastName}</td>
-                    <td>${item.track}</td>
-                    <td>${item.section}</td>
-                    <td>${item.president}</td>
-                    <td>${item.representative}</td>
+                    <td><strong>${item.lrn}</strong></td>
+                    <td>${item.lastName || ''}</td>
+                    <td>${item.track || ''}</td>
+                    <td>${item.section || ''}</td>
+                    <td>${item.president || ''}</td>
+                    <td>${item.vicePresidentExt || ''}</td>
+                    <td>${item.vicePresidentInt || ''}</td>
+                    <td>${item.secretary || ''}</td>
+                    <td>${item.treasurer || ''}</td>
+                    <td>${item.auditor || ''}</td>
+                    <td>${item.pio || ''}</td>
+                    <td>${item.po || ''}</td>
+                    <td>${item.layout1 || ''}</td>
+                    <td>${item.layout2 || ''}</td>
+                    <td>${item.layout3 || ''}</td>
+                    <td>${item.layout4 || ''}</td>
+                    <td>${item.mod1 || ''}</td>
+                    <td>${item.mod2 || ''}</td>
+                    <td>${item.representative || ''}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
