@@ -3,44 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Club Voting System</title>
+    <title>P-VALUE Club - Secure Voting Ballot</title>
     <style>
         :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --accent: #38bdf8;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --success: #10b981;
-            --error: #ef4444;
+            --bg-primary: #0b0f0d; /* Deep obsidian charcoal */
+            --bg-secondary: #131916; /* Muted slate-forest grey/green */
+            --accent: #52796f; /* Matte dark sage green */
+            --accent-hover: #354f52; /* Darker slate green */
+            --text-main: #f0f3f1; /* Premium off-white */
+            --text-muted: #cad2c5; /* Soft light sage grey */
+            --success: #2f3e46;
+            --error: #721c24;
+            --border-color: #222e28; /* Subtle dark border */
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg-primary); color: var(--text-main); font-family: sans-serif; padding: 20px; }
-        .wrapper { max-width: 550px; margin: 40px auto; }
-        .card { background: var(--bg-secondary); border-radius: 12px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        h2 { margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; font-size: 1.5rem; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; }
-        .form-control { width: 100%; background: var(--bg-primary); border: 1px solid #334155; border-radius: 6px; padding: 12px; color: var(--text-main); font-size: 1rem; }
+        body { background: var(--bg-primary); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; }
+        .wrapper { max-width: 650px; margin: 40px auto; }
+        .card { background: var(--bg-secondary); border-radius: 12px; padding: 35px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border: 1px solid var(--border-color); }
+        .brand-header { text-align: center; margin-bottom: 30px; }
+        .brand-header .club-tag { display: inline-block; background: rgba(82, 121, 111, 0.15); color: var(--text-muted); padding: 4px 14px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 10px; border: 1px solid rgba(82, 121, 111, 0.2); }
+        h2 { text-align: center; font-size: 1.7rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; }
+        .section-divider { margin: 30px 0 20px 0; border-top: 2px solid var(--border-color); padding-top: 15px; font-size: 1rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-group { margin-bottom: 22px; }
+        label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.025em; }
+        .form-control { width: 100%; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px 16px; color: var(--text-main); font-size: 1rem; transition: all 0.2s ease; }
         .form-control:focus { outline: none; border-color: var(--accent); }
-        .btn-submit { width: 100%; background: var(--accent); color: var(--bg-primary); border: none; border-radius: 6px; padding: 14px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        .btn-submit:hover { background: #0ea5e9; }
-        .btn-submit:disabled { background: var(--text-muted); cursor: not-allowed; }
-        .alert { padding: 12px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 20px; display: none; }
-        .alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--error); color: #fca5a5; display: block; }
-        .alert-success { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); color: #a7f3d0; display: block; }
+        select.form-control { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23cad2c5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.1rem; }
+        .btn-submit { width: 100%; background: var(--accent); color: #ffffff; border: none; border-radius: 6px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-submit:hover { background: var(--accent-hover); }
+        .btn-submit:disabled { background: #1a2320; color: #555; cursor: not-allowed; border: none; }
+        .alert { padding: 14px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 25px; display: none; text-align: center; font-weight: 600; }
+        .alert-error { background: var(--error); color: #f8d7da; border: 1px solid #f5c6cb; }
+        .alert-success { background: var(--success); color: #d4edda; border: 1px solid #c3e6cb; }
+        .sub-label { font-size: 0.75rem; color: #7f8c8d; font-style: italic; margin-top: 2px; display: block; }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
         <div class="card">
-            <h2>Club Automated Ballot</h2>
+            <div class="brand-header">
+                <span class="club-tag">Official General Ballot</span>
+                <h2>P-VALUE Club Voting System</h2>
+            </div>
             
             <div id="msgBox" class="alert"></div>
 
             <form id="votingForm">
-                <!-- Step 1: Student Demographics -->
+                <!-- Voter Demographics -->
                 <div class="form-group">
                     <label for="lrn">Student LRN (12 Digits)</label>
                     <input type="text" id="lrn" class="form-control" placeholder="Enter 12-digit LRN" required maxlength="12">
@@ -52,7 +62,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="track">Track / Strand</label>
+                    <label for="track">Your Current Track / Strand</label>
                     <select id="track" class="form-control" required>
                         <option value="" disabled selected>Select your Track</option>
                         <option value="STEM">STEM</option>
@@ -67,26 +77,150 @@
                     <input type="text" id="section" class="form-control" placeholder="e.g., Einstein, Newton" required>
                 </div>
 
-                <!-- Step 2: Ballots -->
-                <h2>National/Club Positions</h2>
+                <!-- Executive Board -->
+                <div class="section-divider">Executive Council</div>
+                
                 <div class="form-group">
-                    <label for="president">President Candidate</label>
+                    <label for="president">President</label>
                     <select id="president" class="form-control" required>
-                        <option value="" disabled selected>Choose President</option>
-                        <option value="Dela Cruz, Juan (Progressive Partylist)">Dela Cruz, Juan (Progressive Partylist)</option>
-                        <option value="Santos, Maria (Alliance Partylist)">Santos, Maria (Alliance Partylist)</option>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Shairah Mae Dalay (RELIABLE)">Shairah Mae Dalay (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
                     </select>
                 </div>
 
-                <!-- Dynamic Filter Position -->
                 <div class="form-group">
-                    <label for="representative">Track Representative</label>
-                    <select id="representative" class="form-control" required disabled>
-                        <option value="" disabled selected>Please select Track first</option>
+                    <label for="vicePresidentExt">Vice President (External)</label>
+                    <select id="vicePresidentExt" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Amalhaya Abulkhair (RELIABLE)">Amalhaya Abulkhair (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
                     </select>
                 </div>
 
-                <button type="submit" class="btn-submit" id="submitBtn">Cast Ballot</button>
+                <div class="form-group">
+                    <label for="vicePresidentInt">Vice President (Internal)</label>
+                    <select id="vicePresidentInt" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Yohan Aldrich Reno (RELIABLE)">Yohan Aldrich Reno (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="secretary">Secretary</label>
+                    <select id="secretary" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Ia Naomi Palaginog (RELIABLE)">Ia Naomi Palaginog (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="treasurer">Treasurer</label>
+                    <select id="treasurer" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="John Peter Namuco (RELIABLE)">John Peter Namuco (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="auditor">Auditor</label>
+                    <select id="auditor" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Zaicy Cacayuran (RELIABLE)">Zaicy Cacayuran (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pio">P.I.O.</label>
+                    <select id="pio" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Kim Caullie Herrera (RELIABLE)">Kim Caullie Herrera (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="po">P.O.</label>
+                    <select id="po" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Xander Gabriel Banda (RELIABLE)">Xander Gabriel Banda (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <!-- Committee & Technical Staff -->
+                <div class="section-divider">Creative & Media Operations</div>
+
+                <div class="form-group">
+                    <label for="layout1">Layout Artist #1</label>
+                    <select id="layout1" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Johny Asher Palustre (RELIABLE)">Johny Asher Palustre (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="layout2">Layout Artist #2</label>
+                    <select id="layout2" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Emma Ysabelle Estonilo (RELIABLE)">Emma Ysabelle Estonilo (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="layout3">Layout Artist #3</label>
+                    <select id="layout3" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Juliene Joy Ayenza (RELIABLE)">Juliene Joy Ayenza (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="layout4">Layout Artist #4</label>
+                    <select id="layout4" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Independent / No Candidate Filed">No Candidate Filed</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mod1">Social Media Moderator #1</label>
+                    <select id="mod1" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Myrene Cerbito (RELIABLE)">Myrene Cerbito (RELIABLE Partylist)</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mod2">Social Media Moderator #2</label>
+                    <select id="mod2" class="form-control" required>
+                        <option value="" disabled selected>Select Candidate</option>
+                        <option value="Independent / No Candidate Filed">No Candidate Filed</option>
+                        <option value="Abstain">Abstain</option>
+                    </select>
+                </div>
+
+                <!-- Dynamic Grade Level Representatives -->
+                <div class="section-divider">Localized Grade Level Representatives</div>
+                
+                <div class="form-group">
+                    <label for="representative">Your Designated Representative Position</label>
+                    <select id="representative" class="form-control" required disabled>
+                        <option value="" disabled selected>Please choose your overall Track first</option>
+                    </select>
+                    <span class="sub-label">This choice maps automatically to prevent cross-track election errors.</span>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">Submit Sealed Ballot</button>
             </form>
         </div>
     </div>
@@ -94,23 +228,27 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxC5UUirKQ23Nh4N3daTklJKuJxOZa3CkWMV97BT792_zJk8Let4-s4JGNzAAadjhG3/exec";
 
-        // Candidate Matrix Data Definition
-        const candidatesByTrack = {
+        // Structured Matrix Mapping matching requested specifications
+        const representativeMapping = {
             STEM: [
-                "Aquino, Alan (Tech Partylist)",
-                "Reyes, Jose (Cyber Partylist)"
+                "Grade 12 STEM Rep: Donna Suzanne Ocampo (RELIABLE)",
+                "Grade 11 ACAD Rep (STEM): No Candidate Filed",
+                "Abstain"
             ],
             ABM: [
-                "Soriano, Jane (Biz Partylist)",
-                "Lim, Carlos (Finance Partylist)"
+                "Grade 12 ABM Rep: Joanny Louisa Sarayba (RELIABLE)",
+                "Grade 11 ACAD Rep (ABM): No Candidate Filed",
+                "Abstain"
             ],
             HUMSS: [
-                "Villanueva, Clara (Voice Partylist)",
-                "Santi, Diego (Socials Partylist)"
+                "Grade 12 HUMSS Rep: Felicity Mckenzie Teves (RELIABLE)",
+                "Grade 11 ACAD Rep (HUMSS): No Candidate Filed",
+                "Abstain"
             ],
             TVL: [
-                "Torres, Ben (Skills Partylist)",
-                "Cruz, Elena (Builders Partylist)"
+                "Grade 12 HE/IA/BP Rep: Julliane Ereen Ang (RELIABLE)",
+                "Grade 11 TECH-PRO Rep: No Candidate Filed",
+                "Abstain"
             ]
         };
 
@@ -120,13 +258,12 @@
         const msgBox = document.getElementById('msgBox');
         const submitBtn = document.getElementById('submitBtn');
 
-        // Dynamic Filtering Core Logic
         trackSelect.addEventListener('change', function() {
             const selectedTrack = this.value;
-            repSelect.innerHTML = '<option value="" disabled selected>Choose Representative</option>';
+            repSelect.innerHTML = '<option value="" disabled selected>Choose Representative Candidate</option>';
             
-            if(candidatesByTrack[selectedTrack]) {
-                candidatesByTrack[selectedTrack].forEach(cand => {
+            if(representativeMapping[selectedTrack]) {
+                representativeMapping[selectedTrack].forEach(cand => {
                     const opt = document.createElement('option');
                     opt.value = cand;
                     opt.textContent = cand;
@@ -136,19 +273,19 @@
             }
         });
 
-        // Submit to central hub data handler
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const lrnVal = document.getElementById('lrn').value.trim();
             if (lrnVal.length !== 12 || isNaN(lrnVal)) {
                 msgBox.className = "alert alert-error";
-                msgBox.innerText = "Error: LRN must be exactly 12 numeric digits.";
+                msgBox.style.display = "block";
+                msgBox.innerText = "Validation Failed: LRN must be exactly 12 numerical characters.";
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.innerText = "Transmitting vote...";
+            submitBtn.innerText = "Encrypting and submitting ballot entry...";
 
             const votePayload = {
                 lrn: lrnVal,
@@ -156,6 +293,19 @@
                 track: trackSelect.value,
                 section: document.getElementById('section').value.trim(),
                 president: document.getElementById('president').value,
+                vicePresidentExt: document.getElementById('vicePresidentExt').value,
+                vicePresidentInt: document.getElementById('vicePresidentInt').value,
+                secretary: document.getElementById('secretary').value,
+                treasurer: document.getElementById('treasurer').value,
+                auditor: document.getElementById('auditor').value,
+                pio: document.getElementById('pio').value,
+                po: document.getElementById('po').value,
+                layout1: document.getElementById('layout1').value,
+                layout2: document.getElementById('layout2').value,
+                layout3: document.getElementById('layout3').value,
+                layout4: document.getElementById('layout4').value,
+                mod1: document.getElementById('mod1').value,
+                mod2: document.getElementById('mod2').value,
                 representative: repSelect.value,
                 timestamp: new Date().toLocaleString()
             };
@@ -167,16 +317,19 @@
                 body: JSON.stringify(votePayload)
             }).then(() => {
                 msgBox.className = "alert alert-success";
-                msgBox.innerText = "Success! Your vote has been safely submitted.";
+                msgBox.style.display = "block";
+                msgBox.innerText = "Ballot successfully cast. Database registration complete.";
                 form.reset();
                 repSelect.disabled = true;
-                repSelect.innerHTML = '<option value="" disabled selected>Please select Track first</option>';
+                repSelect.innerHTML = '<option value="" disabled selected>Please choose your overall Track first</option>';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }).catch(() => {
                 msgBox.className = "alert alert-error";
-                msgBox.innerText = "Error connecting to backend database server.";
+                msgBox.style.display = "block";
+                msgBox.innerText = "Network Exception: Could not finalize transmission to cloud.";
             }).finally(() => {
                 submitBtn.disabled = false;
-                submitBtn.innerText = "Cast Ballot";
+                submitBtn.innerText = "Submit Sealed Ballot";
             });
         });
     </script>
