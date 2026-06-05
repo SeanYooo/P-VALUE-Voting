@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Voting System</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg-primary); color: var(--text-main); font-family: sans-serif; padding: 20px; }
+        .wrapper { max-width: 550px; margin: 40px auto; }
+        .card { background: var(--bg-secondary); border-radius: 12px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        h2 { margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; font-size: 1.5rem; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; }
+        .form-control { width: 100%; background: var(--bg-primary); border: 1px solid #334155; border-radius: 6px; padding: 12px; color: var(--text-main); font-size: 1rem; }
+        .form-control:focus { outline: none; border-color: var(--accent); }
+        .btn-submit { width: 100%; background: var(--accent); color: var(--bg-primary); border: none; border-radius: 6px; padding: 14px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .btn-submit:hover { background: #0ea5e9; }
+        .btn-submit:disabled { background: var(--text-muted); cursor: not-allowed; }
+        .alert { padding: 12px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 20px; display: none; }
+        .alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--error); color: #fca5a5; display: block; }
+        .alert-success { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); color: #a7f3d0; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="card">
+            <h2>Club Automated Ballot</h2>
+            
+            <div id="msgBox" class="alert"></div>
+
+            <form id="votingForm">
+                <!-- Step 1: Student Demographics -->
+                <div class="form-group">
+                    <label for="lrn">Student LRN (12 Digits)</label>
+                    <input type="text" id="lrn" class="form-control" placeholder="Enter 12-digit LRN" required maxlength="12">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" class="form-control" placeholder="Enter Last Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="track">Track / Strand</label>
+                    <select id="track" class="form-control" required>
+                        <option value="" disabled selected>Select your Track</option>
+                        <option value="STEM">STEM</option>
+                        <option value="ABM">ABM</option>
+                        <option value="HUMSS">HUMSS</option>
+                        <option value="TVL">TVL</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="section">Section</label>
+                    <input type="text" id="section" class="form-control" placeholder="e.g., Einstein, Newton" required>
+                </div>
+
+                <!-- Step 2: Ballots -->
+                <h2>National/Club Positions</h2>
+                <div class="form-group">
+                    <label for="president">President Candidate</label>
+                    <select id="president" class="form-control" required>
+                        <option value="" disabled selected>Choose President</option>
+                        <option value="Dela Cruz, Juan (Progressive Partylist)">Dela Cruz, Juan (Progressive Partylist)</option>
+                        <option value="Santos, Maria (Alliance Partylist)">Santos, Maria (Alliance Partylist)</option>
+                    </select>
+                </div>
+
+                <!-- Dynamic Filter Position -->
+                <div class="form-group">
+                    <label for="representative">Track Representative</label>
+                    <select id="representative" class="form-control" required disabled>
+                        <option value="" disabled selected>Please select Track first</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">Cast Ballot</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxC5UUirKQ23Nh4N3daTklJKuJxOZa3CkWMV97BT792_zJk8Let4-s4JGNzAAadjhG3/exec";
+
+        // Candidate Matrix Data Definition
+        const candidatesByTrack = {
+            STEM: [
+                "Aquino, Alan (Tech Partylist)",
+                "Reyes, Jose (Cyber Partylist)"
+            ],
+            ABM: [
+                "Soriano, Jane (Biz Partylist)",
+                "Lim, Carlos (Finance Partylist)"
+            ],
+            HUMSS: [
+                "Villanueva, Clara (Voice Partylist)",
+                "Santi, Diego (Socials Partylist)"
+            ],
+            TVL: [
+                "Torres, Ben (Skills Partylist)",
+                "Cruz, Elena (Builders Partylist)"
+            ]
+        };
+
+        const trackSelect = document.getElementById('track');
+        const repSelect = document.getElementById('representative');
+        const form = document.getElementById('votingForm');
+        const msgBox = document.getElementById('msgBox');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Dynamic Filtering Core Logic
+        trackSelect.addEventListener('change', function() {
+            const selectedTrack = this.value;
+            repSelect.innerHTML = '<option value="" disabled selected>Choose Representative</option>';
+            
+            if(candidatesByTrack[selectedTrack]) {
+                candidatesByTrack[selectedTrack].forEach(cand => {
+                    const opt = document.createElement('option');
+                    opt.value = cand;
+                    opt.textContent = cand;
+                    repSelect.appendChild(opt);
+                });
+                repSelect.disabled = false;
+            }
+        });
+
+        // Submit to central hub data handler
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const lrnVal = document.getElementById('lrn').value.trim();
+            if (lrnVal.length !== 12 || isNaN(lrnVal)) {
+                msgBox.className = "alert alert-error";
+                msgBox.innerText = "Error: LRN must be exactly 12 numeric digits.";
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Transmitting vote...";
+
+            const votePayload = {
+                lrn: lrnVal,
+                lastName: document.getElementById('lastName').value.trim(),
+                track: trackSelect.value,
+                section: document.getElementById('section').value.trim(),
+                president: document.getElementById('president').value,
+                representative: repSelect.value,
+                timestamp: new Date().toLocaleString()
+            };
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(votePayload)
+            }).then(() => {
+                msgBox.className = "alert alert-success";
+                msgBox.innerText = "Success! Your vote has been safely submitted.";
+                form.reset();
+                repSelect.disabled = true;
+                repSelect.innerHTML = '<option value="" disabled selected>Please select Track first</option>';
+            }).catch(() => {
+                msgBox.className = "alert alert-error";
+                msgBox.innerText = "Error connecting to backend database server.";
+            }).finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Cast Ballot";
+            });
+        });
+    </script>
+</body>
+</html>
